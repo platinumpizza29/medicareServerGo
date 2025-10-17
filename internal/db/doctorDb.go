@@ -30,7 +30,7 @@ func (db *DoctorDB) CreateDoctor(ctx context.Context, d *models.Doctor) error {
         RETURNING id, created_at, updated_at
     `
 
-	return db.Conn.QueryRow(ctx, query,
+	return db.Pool.QueryRow(ctx, query,
 		d.FirstName,
 		d.LastName,
 		d.ClinicName,
@@ -61,7 +61,7 @@ func (db *DoctorDB) GetDoctorByEmail(ctx context.Context, email string) (*models
     `
 
 	var d models.Doctor
-	err := db.Conn.QueryRow(ctx, query, email).Scan(
+	err := db.Pool.QueryRow(ctx, query, email).Scan(
 		&d.ID,
 		&d.FirstName,
 		&d.LastName,
@@ -102,7 +102,7 @@ func (db *DoctorDB) GetDoctorByID(ctx context.Context, id int) (*models.Doctor, 
     `
 
 	var d models.Doctor
-	err := db.Conn.QueryRow(ctx, query, id).Scan(
+	err := db.Pool.QueryRow(ctx, query, id).Scan(
 		&d.ID,
 		&d.FirstName,
 		&d.LastName,
@@ -141,7 +141,7 @@ func (db *DoctorDB) ListDoctors(ctx context.Context) ([]models.Doctor, error) {
         FROM doctors
         ORDER BY created_at DESC
     `
-	rows, err := db.Conn.Query(ctx, query)
+	rows, err := db.Pool.Query(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -180,6 +180,6 @@ func (db *DoctorDB) ListDoctors(ctx context.Context) ([]models.Doctor, error) {
 
 // DeleteDoctor removes a doctor by ID
 func (db *DoctorDB) DeleteDoctor(ctx context.Context, id int) error {
-	_, err := db.Conn.Exec(ctx, "DELETE FROM doctors WHERE id = $1", id)
+	_, err := db.Pool.Exec(ctx, "DELETE FROM doctors WHERE id = $1", id)
 	return err
 }

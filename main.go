@@ -35,8 +35,8 @@ func main() {
 	//doctor routes
 	router.Route("/v1/doctor", func(r chi.Router) {
 		r.Post("/auth/register", handlers.RegisterDoctorHandler)
-		r.Post("/auth/login", handlers.LoginDoctorHandler)
-		r.Post("/auth/logout", handlers.LogoutDoctorHandler)
+		// r.Post("/auth/login", handlers.LoginDoctorHandler)
+		// r.Post("/auth/logout", handlers.LogoutDoctorHandler)
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", router))
