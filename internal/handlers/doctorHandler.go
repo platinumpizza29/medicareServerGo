@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/platinumpizza29/medicare/internal/models"
@@ -51,27 +52,37 @@ func (h *DoctorHandler) RegisterDoctorHandler(w http.ResponseWriter, r *http.Req
 	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
-// func LoginDoctorHandler(w http.ResponseWriter, r *http.Request) {
-// 	var doctor models.Doctor
-// 	if err := json.NewDecoder(r.Body).Decode(&doctor); err != nil {
-// 		http.Error(w, err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
+func (h *DoctorHandler) LoginDoctorHandler(w http.ResponseWriter, r *http.Request) {
+	var loginReq models.DoctorRequest
+	ctx := r.Context()
 
-// 	if err := services.Login(&doctor); err != nil {
-// 		http.Error(w, err.Error(), http.StatusUnauthorized)
-// 		return
-// 	}
+	if err := json.NewDecoder(r.Body).Decode(&loginReq); err != nil {
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
 
-// 	// return jwt token
-// 	token, err := utils.CreateJwt(doctor.ID)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
+	doctorModel, err := h.DoctorService.GetByEmail(loginReq.Email, ctx)
+	if err != nil {
+		log.Printf("DB error while fetching doctor: %v", err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 
-// 	json.NewEncoder(w).Encode(map[string]string{"token": token})
-// }
+	if doctorModel == nil {
+		http.Error(w, "doctor not found", http.StatusNotFound)
+		return
+	}
+
+	// TODO: Verify password before generating token
+	token, err := utils.CreateJwt(doctorModel.ID)
+	if err != nil {
+		http.Error(w, "failed to create token", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"token": token})
+}
 
 // func LogoutDoctorHandler(w http.ResponseWriter, r *http.Request) {
 // 	// Implementation of LogoutDoctorHandler

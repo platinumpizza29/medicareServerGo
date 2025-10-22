@@ -13,11 +13,16 @@ type Doctor struct {
 	AadharNumber  string
 	Specialty     string
 	Experience    string
-	DOB           string
+	DOB           time.Time
 	Gender        string
 	BloodGroup    string
 	Email         string
 	Password      string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+}
+
+type DoctorRequest struct {
+	Email    string
+	Password string
 }

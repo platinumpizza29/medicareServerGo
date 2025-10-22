@@ -18,3 +18,8 @@ type Patient struct {
 	CreatedAt        time.Time
 	UpdatedAt        time.Time
 }
+
+type PatientRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

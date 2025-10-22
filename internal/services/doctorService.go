@@ -21,7 +21,12 @@ func (s *DoctorService) Create(ctx context.Context, doctor *models.Doctor) error
 	return s.db.CreateDoctor(ctx, doctor)
 }
 
-func GetByEmail(email string) (*models.Doctor, error) {
-	// TODO: Implement compare passwords as well for security
-	return nil, nil
+func (s *DoctorService) GetByEmail(email string, ctx context.Context) (*models.Doctor, error) {
+	doctorModel, err := s.db.GetDoctorByEmail(ctx, email)
+
+	if err != nil {
+		return nil, err
+	}
+	return doctorModel, nil
 }
+

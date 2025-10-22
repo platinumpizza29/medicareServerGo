@@ -11,6 +11,7 @@ import (
 
 	"github.com/platinumpizza29/medicare/internal/db"
 	"github.com/platinumpizza29/medicare/internal/handlers"
+	"github.com/platinumpizza29/medicare/internal/services"
 )
 
 func main() {
@@ -27,16 +28,28 @@ func main() {
 	}
 
 	pool := db.Pool()
-
-	db := db.NewDoctorDB(pool)
-
 	router := chi.NewRouter()
+
+	doctderDb := db.NewDoctorDB(pool)
+	docterService := services.NewDoctorService(doctderDb)
+	docterHandler := handlers.NewDoctorHandler(*docterService)
+
+	patientDB := db.NewPatientDb(pool)
+	patientService := services.NewPatientService(patientDB)
+	patientHandler := handlers.NewPatientHandler(*patientService)
 
 	//doctor routes
 	router.Route("/v1/doctor", func(r chi.Router) {
-		r.Post("/auth/register", handlers.RegisterDoctorHandler)
-		// r.Post("/auth/login", handlers.LoginDoctorHandler)
+		r.Post("/auth/register", docterHandler.RegisterDoctorHandler)
+		r.Post("/auth/login", docterHandler.LoginDoctorHandler)
 		// r.Post("/auth/logout", handlers.LogoutDoctorHandler)
+	})
+
+	//patient routes
+	router.Route("/v1/patient", func(r chi.Router) {
+		r.Post("/auth/register", patientHandler.RegisterPatientHandler)
+		r.Post("/auth/login", patientHandler.LoginPatientHandler)
+		r.Post("/auth/logout", patientHandler.LoginPatientHandler)
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", router))
