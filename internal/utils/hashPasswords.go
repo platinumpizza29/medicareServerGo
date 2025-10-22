@@ -12,12 +12,12 @@ func HashPasswords(password string) (string, error) {
 	return string(hash), nil
 }
 
-func ComparePasswords(password, hashedPassword string) error {
+func ComparePasswords(password, hashedPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 
 	if err != nil {
-		return err
+		return false
 	}
 
-	return nil
+	return true
 }

@@ -80,7 +80,7 @@ func (h *PatientHandler) LoginPatientHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	// verify password
-	if !utils.CheckPasswordHash(loginReq.Password, patientModel.Password) {
+	if utils.ComparePasswords(loginReq.Password, patientModel.Password) {
 		http.Error(w, "invalid password", http.StatusUnauthorized)
 		return
 	}
