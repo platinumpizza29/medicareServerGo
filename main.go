@@ -42,6 +42,10 @@ func main() {
 	presService := services.NewPrescriptionService(presDB)
 	presHandler := handlers.NewPrescriptionHandler(presService)
 
+	visitsDB := db.NewVisitsDB(pool)
+	visitsService := services.NewVisitService(visitsDB)
+	visitsHandler := handlers.NewVisitHandler(visitsService)
+
 	//doctor routes
 	router.Route("/v1/doctor", func(r chi.Router) {
 		r.Post("/auth/register", docterHandler.RegisterDoctorHandler)
@@ -62,6 +66,16 @@ func main() {
 		r.Get("/{id}", presHandler.GetPrescriptionByID)          // GET /v1/prescriptions/1
 		r.Get("/patient/{patientID}", presHandler.ListByPatient) // GET /v1/prescriptions/patient/5
 		r.Delete("/{id}", presHandler.DeletePrescription)        // DELETE /v1/prescriptions/1
+	})
+
+	//visits routes
+	router.Route("/v1/visits", func(r chi.Router) {
+		r.Post("/", visitsHandler.CreateVisit)
+		r.Get("/{id}", visitsHandler.GetVisitByID)
+		r.Get("/patient/{patientID}", visitsHandler.GetVisitsByPatientID)
+		r.Get("/doctor/{doctorID}", visitsHandler.GetVisitsByDoctorID)
+		r.Put("/{id}", visitsHandler.UpdateVisit)
+		r.Delete("/{id}", visitsHandler.DeleteVisit)
 	})
 
 	log.Fatal(http.ListenAndServe(":8080", router))
