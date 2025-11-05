@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/joho/godotenv"
 
 	"github.com/platinumpizza29/medicare/internal/db"
 	"github.com/platinumpizza29/medicare/internal/handlers"
