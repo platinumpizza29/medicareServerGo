@@ -77,5 +77,5 @@ func main() {
 		r.Delete("/{id}", visitsHandler.DeleteVisit)
 	})
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":3000", router))
 }
