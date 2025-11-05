@@ -15,9 +15,9 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error Loading .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal("Error Loading .env file")
+	// }
 
 	url := os.Getenv("DATABASE_URL")
 	var ctx = context.TODO()
