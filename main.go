@@ -1,3 +1,8 @@
+// @title Medicare API
+// @version 1.0.0
+// @description API documentation for the Medicare service.
+// @host localhost:3000
+// @BasePath /v1
 package main
 
 import (
@@ -7,16 +12,18 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 
+	"github.com/platinumpizza29/medicare/docs"
 	"github.com/platinumpizza29/medicare/internal/db"
 	"github.com/platinumpizza29/medicare/internal/handlers"
 	"github.com/platinumpizza29/medicare/internal/services"
 )
 
 func main() {
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Fatal("Error Loading .env file")
-	// }
+	//if err := godotenv.Load(); err != nil {
+	//log.Fatal("Error Loading .env file")
+	//}
 
 	url := os.Getenv("DATABASE_URL")
 	var ctx = context.TODO()
@@ -28,6 +35,14 @@ func main() {
 
 	pool := db.Pool()
 	router := chi.NewRouter()
+
+	docs.SwaggerInfo.Title = "Medicare API"
+	docs.SwaggerInfo.Description = "API documentation for the Medicare service."
+	docs.SwaggerInfo.Version = "1.0.0"
+	docs.SwaggerInfo.BasePath = "/v1"
+	if swaggerHost := os.Getenv("SWAGGER_HOST"); swaggerHost != "" {
+		docs.SwaggerInfo.Host = swaggerHost
+	}
 
 	doctderDb := db.NewDoctorDB(pool)
 	docterService := services.NewDoctorService(doctderDb)
@@ -76,6 +91,12 @@ func main() {
 		r.Put("/{id}", visitsHandler.UpdateVisit)
 		r.Delete("/{id}", visitsHandler.DeleteVisit)
 	})
+
+	router.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	router.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	log.Fatal(http.ListenAndServe(":3000", router))
 }

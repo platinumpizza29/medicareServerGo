@@ -29,7 +29,16 @@ func (h *PrescriptionHandler) RegisterRoutes(r chi.Router) {
 	})
 }
 
-// CreatePrescription handles POST /api/prescriptions
+// CreatePrescription godoc
+// @Summary Create a new prescription
+// @Tags prescriptions
+// @Accept json
+// @Produce json
+// @Param request body PrescriptionInput true "Prescription"
+// @Success 201 {object} PrescriptionCreated
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /prescriptions [post]
 func (h *PrescriptionHandler) CreatePrescription(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var p models.Prescription
@@ -50,7 +59,16 @@ func (h *PrescriptionHandler) CreatePrescription(w http.ResponseWriter, r *http.
 	})
 }
 
-// GetPrescriptionByID handles GET /api/prescriptions/{id}
+// GetPrescriptionByID godoc
+// @Summary Get a prescription by ID
+// @Tags prescriptions
+// @Produce json
+// @Param id path int true "Prescription ID"
+// @Success 200 {object} models.Prescription
+// @Failure 400 {string} string
+// @Failure 404 {string} string
+// @Failure 500 {string} string
+// @Router /prescriptions/{id} [get]
 func (h *PrescriptionHandler) GetPrescriptionByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	idStr := chi.URLParam(r, "id")
@@ -73,7 +91,15 @@ func (h *PrescriptionHandler) GetPrescriptionByID(w http.ResponseWriter, r *http
 	writeJSON(w, http.StatusOK, p)
 }
 
-// ListByPatient handles GET /api/prescriptions/patient/{patientID}
+// ListByPatient godoc
+// @Summary List prescriptions by patient
+// @Tags prescriptions
+// @Produce json
+// @Param patientID path int true "Patient ID"
+// @Success 200 {array} models.Prescription
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /prescriptions/patient/{patientID} [get]
 func (h *PrescriptionHandler) ListByPatient(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	patientIDStr := chi.URLParam(r, "patientID")
@@ -92,7 +118,15 @@ func (h *PrescriptionHandler) ListByPatient(w http.ResponseWriter, r *http.Reque
 	writeJSON(w, http.StatusOK, prescriptions)
 }
 
-// DeletePrescription handles DELETE /api/prescriptions/{id}
+// DeletePrescription godoc
+// @Summary Delete a prescription
+// @Tags prescriptions
+// @Produce json
+// @Param id path int true "Prescription ID"
+// @Success 200 {object} Message
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /prescriptions/{id} [delete]
 func (h *PrescriptionHandler) DeletePrescription(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	idStr := chi.URLParam(r, "id")

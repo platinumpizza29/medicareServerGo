@@ -21,6 +21,15 @@ func NewPatientHandler(patientService services.PatientService) *PatientHandler {
 }
 
 // RegisterPatientHandler handles patient registration
+// @Summary Register a new patient
+// @Tags patient
+// @Accept json
+// @Produce json
+// @Param request body PatientRegistration true "Patient registration"
+// @Success 200 {object} AuthToken
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /patient/auth/register [post]
 func (h *PatientHandler) RegisterPatientHandler(w http.ResponseWriter, r *http.Request) {
 	var patient models.Patient
 	ctx := r.Context()
@@ -58,6 +67,19 @@ func (h *PatientHandler) RegisterPatientHandler(w http.ResponseWriter, r *http.R
 }
 
 // LoginPatientHandler handles patient login
+// @Summary Login as a patient
+// @Description Also handles /patient/auth/logout (currently routed to the same handler).
+// @Tags patient
+// @Accept json
+// @Produce json
+// @Param request body PatientLogin true "Patient login"
+// @Success 200 {object} AuthToken
+// @Failure 400 {string} string
+// @Failure 401 {string} string
+// @Failure 404 {string} string
+// @Failure 500 {string} string
+// @Router /patient/auth/login [post]
+// @Router /patient/auth/logout [post]
 func (h *PatientHandler) LoginPatientHandler(w http.ResponseWriter, r *http.Request) {
 	var loginReq models.PatientRequest
 	ctx := r.Context()

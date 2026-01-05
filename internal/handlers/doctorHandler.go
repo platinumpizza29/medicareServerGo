@@ -20,6 +20,16 @@ func NewDoctorHandler(doctorService services.DoctorService) *DoctorHandler {
 	}
 }
 
+// RegisterDoctorHandler godoc
+// @Summary Register a new doctor
+// @Tags doctor
+// @Accept json
+// @Produce json
+// @Param request body DoctorRegistration true "Doctor registration"
+// @Success 200 {object} AuthToken
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /doctor/auth/register [post]
 func (h *DoctorHandler) RegisterDoctorHandler(w http.ResponseWriter, r *http.Request) {
 	var doctor models.Doctor
 	ctx := r.Context()
@@ -52,6 +62,17 @@ func (h *DoctorHandler) RegisterDoctorHandler(w http.ResponseWriter, r *http.Req
 	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
+// LoginDoctorHandler godoc
+// @Summary Login as a doctor
+// @Tags doctor
+// @Accept json
+// @Produce json
+// @Param request body DoctorLogin true "Doctor login"
+// @Success 200 {object} AuthToken
+// @Failure 400 {string} string
+// @Failure 404 {string} string
+// @Failure 500 {string} string
+// @Router /doctor/auth/login [post]
 func (h *DoctorHandler) LoginDoctorHandler(w http.ResponseWriter, r *http.Request) {
 	var loginReq models.DoctorRequest
 	ctx := r.Context()
