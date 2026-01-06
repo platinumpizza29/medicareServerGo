@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/platinumpizza29/medicare/internal/models"
 )
@@ -55,9 +56,10 @@ func (db *PatientDB) GetPatientByEmail(ctx context.Context, email string) (*mode
                created_at, updated_at
         FROM patients
         WHERE email = $1
-    `
+	`
 
 	var p models.Patient
+	var dob pgtype.Date
 	err := db.Pool.QueryRow(ctx, query, email).Scan(
 		&p.ID,
 		&p.FirstName,
@@ -65,7 +67,7 @@ func (db *PatientDB) GetPatientByEmail(ctx context.Context, email string) (*mode
 		&p.Address,
 		&p.MobileNumber,
 		&p.AadharNumber,
-		&p.DOB,
+		&dob,
 		&p.Gender,
 		&p.BloodGroup,
 		&p.EmergencyContact,
@@ -82,6 +84,10 @@ func (db *PatientDB) GetPatientByEmail(ctx context.Context, email string) (*mode
 		return nil, err
 	}
 
+	if dob.Valid {
+		p.DOB = dob.Time.Format("2006-01-02")
+	}
+
 	return &p, nil
 }
 
@@ -93,9 +99,10 @@ func (db *PatientDB) GetPatientByID(ctx context.Context, id int) (*models.Patien
                created_at, updated_at
         FROM patients
         WHERE id = $1
-    `
+	`
 
 	var p models.Patient
+	var dob pgtype.Date
 	err := db.Pool.QueryRow(ctx, query, id).Scan(
 		&p.ID,
 		&p.FirstName,
@@ -103,7 +110,7 @@ func (db *PatientDB) GetPatientByID(ctx context.Context, id int) (*models.Patien
 		&p.Address,
 		&p.MobileNumber,
 		&p.AadharNumber,
-		&p.DOB,
+		&dob,
 		&p.Gender,
 		&p.BloodGroup,
 		&p.EmergencyContact,
@@ -118,6 +125,10 @@ func (db *PatientDB) GetPatientByID(ctx context.Context, id int) (*models.Patien
 			return nil, nil
 		}
 		return nil, err
+	}
+
+	if dob.Valid {
+		p.DOB = dob.Time.Format("2006-01-02")
 	}
 
 	return &p, nil
@@ -141,6 +152,7 @@ func (db *PatientDB) ListPatients(ctx context.Context) ([]models.Patient, error)
 	var patients []models.Patient
 	for rows.Next() {
 		var p models.Patient
+		var dob pgtype.Date
 		err := rows.Scan(
 			&p.ID,
 			&p.FirstName,
@@ -148,7 +160,7 @@ func (db *PatientDB) ListPatients(ctx context.Context) ([]models.Patient, error)
 			&p.Address,
 			&p.MobileNumber,
 			&p.AadharNumber,
-			&p.DOB,
+			&dob,
 			&p.Gender,
 			&p.BloodGroup,
 			&p.EmergencyContact,
@@ -159,6 +171,9 @@ func (db *PatientDB) ListPatients(ctx context.Context) ([]models.Patient, error)
 		)
 		if err != nil {
 			return nil, err
+		}
+		if dob.Valid {
+			p.DOB = dob.Time.Format("2006-01-02")
 		}
 		patients = append(patients, p)
 	}
@@ -171,4 +186,3 @@ func (db *PatientDB) DeletePatient(ctx context.Context, id int) error {
 	_, err := db.Pool.Exec(ctx, "DELETE FROM patients WHERE id = $1", id)
 	return err
 }
-
