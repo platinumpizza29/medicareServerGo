@@ -33,6 +33,10 @@ func (s *VisitService) GetVisitsByDoctorID(ctx context.Context, doctorID int) ([
 	return s.db.GetVisitsByDoctorID(ctx, doctorID)
 }
 
+func (s *VisitService) GetRecentPatientsByDoctorID(ctx context.Context, doctorID int, limit int) ([]models.RecentPatient, error) {
+	return s.db.GetRecentPatientsByDoctorID(ctx, doctorID, limit)
+}
+
 func (s *VisitService) UpdateVisit(ctx context.Context, visit *models.Visit) error {
 	return s.db.UpdateVisit(ctx, visit)
 }

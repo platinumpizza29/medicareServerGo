@@ -36,6 +36,12 @@ type DoctorLogin struct {
 	Password string `json:"Password"`
 }
 
+// DoctorLoginResponse describes the doctor login response payload.
+type DoctorLoginResponse struct {
+	Token          string                 `json:"token"`
+	RecentPatients []models.RecentPatient `json:"recent_patients"`
+}
+
 // PatientRegistration describes the patient registration payload.
 type PatientRegistration struct {
 	FirstName        string `json:"FirstName"`

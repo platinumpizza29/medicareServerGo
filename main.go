@@ -44,10 +44,6 @@ func main() {
 		docs.SwaggerInfo.Host = swaggerHost
 	}
 
-	doctderDb := db.NewDoctorDB(pool)
-	docterService := services.NewDoctorService(doctderDb)
-	docterHandler := handlers.NewDoctorHandler(*docterService)
-
 	patientDB := db.NewPatientDb(pool)
 	patientService := services.NewPatientService(patientDB)
 	patientHandler := handlers.NewPatientHandler(*patientService)
@@ -60,10 +56,15 @@ func main() {
 	visitsService := services.NewVisitService(visitsDB)
 	visitsHandler := handlers.NewVisitHandler(visitsService)
 
+	doctderDb := db.NewDoctorDB(pool)
+	docterService := services.NewDoctorService(doctderDb)
+	docterHandler := handlers.NewDoctorHandler(*docterService, visitsService, patientService)
+
 	//doctor routes
 	router.Route("/v1/doctor", func(r chi.Router) {
 		r.Post("/auth/register", docterHandler.RegisterDoctorHandler)
 		r.Post("/auth/login", docterHandler.LoginDoctorHandler)
+		r.Get("/patients/{patientID}", docterHandler.GetPatientProfileByID)
 		// r.Post("/auth/logout", handlers.LogoutDoctorHandler)
 	})
 

@@ -122,6 +122,42 @@ func (db *VisitsDB) GetVisitsByDoctorID(ctx context.Context, doctorID int) ([]*m
 	return visits, nil
 }
 
+func (db *VisitsDB) GetRecentPatientsByDoctorID(ctx context.Context, doctorID int, limit int) ([]models.RecentPatient, error) {
+	query := `
+		SELECT p.id, p.first_name, p.last_name, p.mobile_number, p.email,
+		       MAX(v.visit_date) AS last_visit_date
+		FROM visits v
+		JOIN patients p ON p.id = v.patient_id
+		WHERE v.doctor_id = $1
+		GROUP BY p.id, p.first_name, p.last_name, p.mobile_number, p.email
+		ORDER BY last_visit_date DESC
+		LIMIT $2`
+
+	rows, err := db.Pool.Query(ctx, query, doctorID, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var patients []models.RecentPatient
+	for rows.Next() {
+		var p models.RecentPatient
+		if err := rows.Scan(
+			&p.ID,
+			&p.FirstName,
+			&p.LastName,
+			&p.MobileNumber,
+			&p.Email,
+			&p.LastVisitDate,
+		); err != nil {
+			return nil, err
+		}
+		patients = append(patients, p)
+	}
+
+	return patients, nil
+}
+
 func (db *VisitsDB) UpdateVisit(ctx context.Context, v *models.Visit) error {
 	query := `
 		UPDATE visits

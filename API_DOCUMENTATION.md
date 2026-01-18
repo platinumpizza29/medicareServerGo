@@ -51,6 +51,32 @@ This document provides detailed documentation for the Medicare API routes.
             "password": "string"
         }
         ```
+    *   **Response Body:**
+
+        ```json
+        {
+            "token": "string",
+            "recent_patients": [
+                {
+                    "id": "integer",
+                    "first_name": "string",
+                    "last_name": "string",
+                    "mobile_number": "string",
+                    "email": "string",
+                    "last_visit_date": "string (RFC3339)"
+                }
+            ]
+        }
+        ```
+
+*   **Get patient profile (doctor)**
+
+    *   **Endpoint:** `/doctor/patients/{patientID}`
+    *   **Method:** `GET`
+    *   **Description:** Retrieves a full patient profile for a doctor view.
+    *   **Headers:**
+
+        `Authorization: Bearer <token>`
 
 ### Patient Authentication
 
