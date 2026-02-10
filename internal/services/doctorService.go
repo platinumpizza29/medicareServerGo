@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/platinumpizza29/medicare/internal/db"
 	"github.com/platinumpizza29/medicare/internal/models"
+	"github.com/platinumpizza29/medicare/internal/utils"
 )
 
 type DoctorService struct {
@@ -30,3 +32,9 @@ func (s *DoctorService) GetByEmail(email string, ctx context.Context) (*models.D
 	return doctorModel, nil
 }
 
+func ComparePasswords(password, hashedPassword string) error {
+	if !utils.ComparePasswords(password, hashedPassword) {
+		return errors.New("incorrect password")
+	}
+	return nil
+}

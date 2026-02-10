@@ -47,7 +47,6 @@ func main() {
 	router.Route("/v1/doctor", func(r chi.Router) {
 		r.Post("/auth/register", docterHandler.RegisterDoctorHandler)
 		r.Post("/auth/login", docterHandler.LoginDoctorHandler)
-		r.Get("/patients/{patientID}", docterHandler.GetPatientProfileByID)
 		// r.Post("/auth/logout", handlers.LogoutDoctorHandler)
 	})
 
