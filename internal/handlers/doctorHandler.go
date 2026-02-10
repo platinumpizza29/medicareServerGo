@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+
 	"github.com/platinumpizza29/medicare/internal/models"
 	"github.com/platinumpizza29/medicare/internal/services"
 	"github.com/platinumpizza29/medicare/internal/utils"
@@ -20,11 +21,11 @@ type DoctorHandler struct {
 	PatientService *services.PatientService
 }
 
-func NewDoctorHandler(doctorService services.DoctorService, visitService *services.VisitService, patientService *services.PatientService) *DoctorHandler {
+func NewDoctorHandler(
+	doctorService services.DoctorService,
+) *DoctorHandler {
 	return &DoctorHandler{
-		DoctorService:  doctorService,
-		VisitService:   visitService,
-		PatientService: patientService,
+		DoctorService: doctorService,
 	}
 }
 
@@ -111,7 +112,11 @@ func (h *DoctorHandler) LoginDoctorHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	recentPatients, err := h.VisitService.GetRecentPatientsByDoctorID(ctx, doctorModel.ID, recentPatientLimit)
+	recentPatients, err := h.VisitService.GetRecentPatientsByDoctorID(
+		ctx,
+		doctorModel.ID,
+		recentPatientLimit,
+	)
 	if err != nil {
 		log.Printf("DB error while fetching recent patients: %v", err)
 		http.Error(w, "internal server error", http.StatusInternalServerError)
